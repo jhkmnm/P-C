@@ -25,9 +25,9 @@ namespace PAndC
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
-        
+
         /// <summary>
         /// 将文本转成数组，数字之间使用空格分隔
         /// </summary>
@@ -37,22 +37,22 @@ namespace PAndC
             var textSplit = lineText.Split(' ');
             var leftTemp = new List<int>();
 
-            foreach(var str in textSplit)
+            foreach (var str in textSplit)
             {
                 int i = 0;
-                if(int.TryParse(str, out i))
+                if (int.TryParse(str, out i))
                 {
                     leftTemp.Add(i);
                 }
             }
 
-            if(leftTemp.Count != 10)
+            if (leftTemp.Count != 10)
             {
                 MessageBox.Show("输入的数字有问题，确认一组是否是10个数字，数字之间使用空格分隔");
                 return false;
             }
 
-            if(leftList == null)
+            if (leftList == null)
             {
                 leftList = new List<List<int>>();
             }
@@ -75,17 +75,17 @@ namespace PAndC
         /// <returns></returns>
         private void SelectLeftList(int rowIndex)
         {
-            if(rowIndex < 0 || rowIndex > leftList.Count)
+            if (rowIndex < 0 || rowIndex > leftList.Count)
                 return;
             if (selectedList == null)
                 selectedList = new List<List<int>>();
 
             var selectedItem = leftList[rowIndex];
-            if(!selectedList.Contains(selectedItem))
+            if (!selectedList.Contains(selectedItem))
             {
                 selectedList.Add(selectedItem);
                 lblSelected.Items.Add(lbxLeft.Items[rowIndex]);
-            }            
+            }
         }
 
         /// <summary>
@@ -126,9 +126,9 @@ namespace PAndC
         private void OuputResult(List<List<int>> result)
         {
             List<int> temp = new List<int>();
-            foreach(var item in result)
+            foreach (var item in result)
             {
-                if(item.Count > 0)
+                if (item.Count > 0)
                 {
                     temp.AddRange(item);
                 }
@@ -157,22 +157,23 @@ namespace PAndC
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(selectedList == null || selectedList.Count == 0)
+            if (selectedList == null || selectedList.Count == 0)
             {
                 MessageBox.Show("先选择左侧的数据后再输出");
                 return;
             }
             ListContains();
+            SendByteToCOM();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if(string.IsNullOrEmpty(txtNums.Text))
+            if (string.IsNullOrEmpty(txtNums.Text))
             {
                 MessageBox.Show("先输入数字");
             }
 
-            if(BuildLeftList(txtNums.Text))
+            if (BuildLeftList(txtNums.Text))
             {
                 lbxLeft.Items.Add(txtNums.Text);
             }
@@ -183,19 +184,19 @@ namespace PAndC
             using (OpenFileDialog file = new OpenFileDialog())
             {
                 file.Filter = "文本文件|*.txt";
-                if(file.ShowDialog() == DialogResult.OK)
+                if (file.ShowDialog() == DialogResult.OK)
                 {
                     var allLines = File.ReadAllText(file.FileName);
                     var lines = allLines.Replace("\r", "").Split('\n');
-                    foreach(var line in lines)
+                    foreach (var line in lines)
                     {
-                        if(!string.IsNullOrEmpty(line))
+                        if (!string.IsNullOrEmpty(line))
                         {
                             if (BuildLeftList(line))
                                 lbxLeft.Items.Add(line);
                             else
                                 break;
-                        }                        
+                        }
                     }
                 }
             }
@@ -204,6 +205,35 @@ namespace PAndC
         private void lbxLeft_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectLeftList(lbxLeft.SelectedIndex);
+        }
+
+        private void SendByteToCOM()
+        {
+            COMHelper com = new COMHelper("COM2");
+            com.OpenCom();
+
+            foreach (var row in lbxOutput.Items)
+            {
+                var output = $"FA DD {row.ToString()} 0D 0A";
+                var outputByte = strToHexByte(output);
+                com.SendData(outputByte);
+            }
+        }
+
+        /// <summary>
+        /// 字符串转换16进制字节数组
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        private byte[] strToHexByte(string hexString)
+        {
+            hexString = hexString.Replace(" ", "");
+            if ((hexString.Length % 2) != 0)
+                hexString += " ";
+            byte[] returnBytes = new byte[hexString.Length / 2];
+            for (int i = 0; i < returnBytes.Length; i++)
+                returnBytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2).Replace(" ", ""), 16);
+            return returnBytes;
         }
     }
 }
