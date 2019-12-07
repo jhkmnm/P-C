@@ -15,7 +15,6 @@ namespace PAndC
 {
     public partial class Form1 : Form
     {
-        List<List<int>> leftList = null;
         List<List<int>> selectedList = null;
 
         public Form1()
@@ -32,32 +31,15 @@ namespace PAndC
         /// 将文本转成数组，数字之间使用空格分隔
         /// </summary>
         /// <param name="lineText">单行文本</param>
-        private bool BuildLeftList(string lineText)
+        private bool SetLeftList(string lineText)
         {
-            var textSplit = lineText.Split(' ');
-            var leftTemp = new List<int>();
-
-            foreach (var str in textSplit)
-            {
-                int i = 0;
-                if (int.TryParse(str, out i))
-                {
-                    leftTemp.Add(i);
-                }
-            }
+            var leftTemp = BuildList(lineText);
 
             if (leftTemp.Count != 10)
             {
                 MessageBox.Show("输入的数字有问题，确认一组是否是10个数字，数字之间使用空格分隔");
                 return false;
             }
-
-            if (leftList == null)
-            {
-                leftList = new List<List<int>>();
-            }
-
-            leftList.Add(leftTemp);
             return true;
             //List<List<int>> list = new List<List<int>>();
             //list.Add(new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
@@ -69,22 +51,45 @@ namespace PAndC
         }
 
         /// <summary>
+        /// 将字符串转换成数组
+        /// </summary>
+        /// <param name="lineText"></param>
+        /// <returns></returns>
+        private List<int> BuildList(string lineText)
+        {
+            var textSplit = lineText.Split(' ');
+            var temp = new List<int>();
+
+            foreach (var str in textSplit)
+            {
+                int i = 0;
+                if (int.TryParse(str, out i))
+                {
+                    temp.Add(i);
+                }
+            }
+
+            return temp;
+        }
+
+        /// <summary>
         /// 获取选择行的数组
         /// </summary>
         /// <param name="rowIndex"></param>
         /// <returns></returns>
         private void SelectLeftList(int rowIndex)
         {
-            if (rowIndex < 0 || rowIndex > leftList.Count)
+            if (rowIndex < 0)
                 return;
             if (selectedList == null)
                 selectedList = new List<List<int>>();
 
-            var selectedItem = leftList[rowIndex];
-            if (!selectedList.Contains(selectedItem))
+            var selectedItem = BuildList(lbxLeft.Items[rowIndex].ToString());
+            if(!selectedList.Contains(selectedItem))
             {
                 selectedList.Add(selectedItem);
                 lblSelected.Items.Add(lbxLeft.Items[rowIndex]);
+                lbxLeft.Items.RemoveAt(rowIndex);
             }
         }
 
@@ -93,8 +98,11 @@ namespace PAndC
         /// </summary>
         private void ListContains()
         {
-            var leftListCopy = ObjectCopier.Clone(leftList);
-            //leftList.ForEach(i => leftListCopy.Add(i));
+            var leftListCopy = new List<List<int>>();
+            foreach (var leftItem in lbxLeft.Items)
+            {
+                leftListCopy.Add(BuildList(leftItem.ToString()));
+            }
 
             //选择后的数据的组合
             List<int[]> selectedCombinationList = new List<int[]>();
@@ -162,6 +170,7 @@ namespace PAndC
                 MessageBox.Show("先选择左侧的数据后再输出");
                 return;
             }
+            lbxOutput.Items.Clear();
             ListContains();
             SendByteToCOM();
         }
@@ -173,10 +182,8 @@ namespace PAndC
                 MessageBox.Show("先输入数字");
             }
 
-            if (BuildLeftList(txtNums.Text))
-            {
+            if (SetLeftList(txtNums.Text))
                 lbxLeft.Items.Add(txtNums.Text);
-            }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -192,7 +199,7 @@ namespace PAndC
                     {
                         if (!string.IsNullOrEmpty(line))
                         {
-                            if (BuildLeftList(line))
+                            if (SetLeftList(line))
                                 lbxLeft.Items.Add(line);
                             else
                                 break;
@@ -205,6 +212,30 @@ namespace PAndC
         private void lbxLeft_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectLeftList(lbxLeft.SelectedIndex);
+        }
+
+        private void 删除ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var leftSelected = lbxLeft.SelectedItems;
+            if(leftSelected.Count == 0)
+            {
+                MessageBox.Show("选择要删除的行，选择多行可按住Ctrl后选择");
+                return;
+            }
+            lbxLeft.SelectedIndexChanged -= lbxLeft_SelectedIndexChanged;
+            for (int i = 0;i< leftSelected.Count;)
+            {
+                var strSelected = leftSelected[i].ToString();
+                var selected = BuildList(strSelected);
+                var a = selectedList.Find(f => f.ToString() == selected.ToString());
+                if (a != null)
+                {
+                    selectedList.Remove(a);
+                    lblSelected.Items.Remove(strSelected);
+                }
+                lbxLeft.Items.Remove(strSelected);
+            }
+            lbxLeft.SelectedIndexChanged += lbxLeft_SelectedIndexChanged;
         }
 
         private void SendByteToCOM()

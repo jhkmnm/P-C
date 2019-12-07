@@ -36,18 +36,19 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.lbxLeft = new System.Windows.Forms.ListBox();
-            this.lblSelected = new System.Windows.Forms.ListBox();
-            this.lbxOutput = new System.Windows.Forms.ListBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblSelected = new System.Windows.Forms.ListBox();
+            this.lbxOutput = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnClearA
             // 
-            this.btnClearA.Location = new System.Drawing.Point(564, 9);
+            this.btnClearA.Location = new System.Drawing.Point(587, 12);
             this.btnClearA.Name = "btnClearA";
-            this.btnClearA.Size = new System.Drawing.Size(75, 26);
+            this.btnClearA.Size = new System.Drawing.Size(75, 49);
             this.btnClearA.TabIndex = 0;
             this.btnClearA.Text = "清空";
             this.btnClearA.UseVisualStyleBackColor = true;
@@ -55,9 +56,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1102, 9);
+            this.button2.Location = new System.Drawing.Point(1059, 70);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 26);
+            this.button2.Size = new System.Drawing.Size(75, 73);
             this.button2.TabIndex = 1;
             this.button2.Text = "输出";
             this.button2.UseVisualStyleBackColor = true;
@@ -65,9 +66,9 @@
             // 
             // btnClearB
             // 
-            this.btnClearB.Location = new System.Drawing.Point(964, 9);
+            this.btnClearB.Location = new System.Drawing.Point(948, 12);
             this.btnClearB.Name = "btnClearB";
-            this.btnClearB.Size = new System.Drawing.Size(75, 26);
+            this.btnClearB.Size = new System.Drawing.Size(75, 49);
             this.btnClearB.TabIndex = 2;
             this.btnClearB.Text = "清空";
             this.btnClearB.UseVisualStyleBackColor = true;
@@ -75,16 +76,16 @@
             // 
             // txtNums
             // 
-            this.txtNums.Location = new System.Drawing.Point(12, 12);
+            this.txtNums.Location = new System.Drawing.Point(27, 12);
             this.txtNums.Name = "txtNums";
             this.txtNums.Size = new System.Drawing.Size(239, 25);
             this.txtNums.TabIndex = 3;
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(257, 12);
+            this.btnAdd.Location = new System.Drawing.Point(272, 12);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(67, 26);
+            this.btnAdd.Size = new System.Drawing.Size(67, 49);
             this.btnAdd.TabIndex = 4;
             this.btnAdd.Text = "添加";
             this.btnAdd.UseVisualStyleBackColor = true;
@@ -92,9 +93,9 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(330, 12);
+            this.btnImport.Location = new System.Drawing.Point(345, 12);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(67, 26);
+            this.btnImport.Size = new System.Drawing.Size(67, 49);
             this.btnImport.TabIndex = 5;
             this.btnImport.Text = "导入";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -105,29 +106,12 @@
             this.lbxLeft.ContextMenuStrip = this.contextMenuStrip1;
             this.lbxLeft.FormattingEnabled = true;
             this.lbxLeft.ItemHeight = 15;
-            this.lbxLeft.Location = new System.Drawing.Point(12, 53);
+            this.lbxLeft.Location = new System.Drawing.Point(12, 70);
             this.lbxLeft.Name = "lbxLeft";
-            this.lbxLeft.Size = new System.Drawing.Size(385, 589);
+            this.lbxLeft.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbxLeft.Size = new System.Drawing.Size(343, 589);
             this.lbxLeft.TabIndex = 6;
             this.lbxLeft.SelectedIndexChanged += new System.EventHandler(this.lbxLeft_SelectedIndexChanged);
-            // 
-            // lblSelected
-            // 
-            this.lblSelected.FormattingEnabled = true;
-            this.lblSelected.ItemHeight = 15;
-            this.lblSelected.Location = new System.Drawing.Point(403, 53);
-            this.lblSelected.Name = "lblSelected";
-            this.lblSelected.Size = new System.Drawing.Size(385, 589);
-            this.lblSelected.TabIndex = 7;
-            // 
-            // lbxOutput
-            // 
-            this.lbxOutput.FormattingEnabled = true;
-            this.lbxOutput.ItemHeight = 15;
-            this.lbxOutput.Location = new System.Drawing.Point(794, 53);
-            this.lbxOutput.Name = "lbxOutput";
-            this.lbxOutput.Size = new System.Drawing.Size(385, 589);
-            this.lbxOutput.TabIndex = 8;
             // 
             // contextMenuStrip1
             // 
@@ -142,12 +126,42 @@
             this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
             this.删除ToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
             this.删除ToolStripMenuItem.Text = "删除";
+            this.删除ToolStripMenuItem.Click += new System.EventHandler(this.删除ToolStripMenuItem_Click);
+            // 
+            // lblSelected
+            // 
+            this.lblSelected.FormattingEnabled = true;
+            this.lblSelected.ItemHeight = 15;
+            this.lblSelected.Location = new System.Drawing.Point(361, 70);
+            this.lblSelected.Name = "lblSelected";
+            this.lblSelected.Size = new System.Drawing.Size(343, 589);
+            this.lblSelected.TabIndex = 7;
+            // 
+            // lbxOutput
+            // 
+            this.lbxOutput.FormattingEnabled = true;
+            this.lbxOutput.ItemHeight = 15;
+            this.lbxOutput.Location = new System.Drawing.Point(710, 70);
+            this.lbxOutput.Name = "lbxOutput";
+            this.lbxOutput.Size = new System.Drawing.Size(343, 589);
+            this.lbxOutput.TabIndex = 8;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(17, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(248, 15);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "每行10个数字，数字间使用空格分隔";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1189, 653);
+            this.ClientSize = new System.Drawing.Size(1147, 667);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbxOutput);
             this.Controls.Add(this.lblSelected);
             this.Controls.Add(this.lbxLeft);
@@ -179,6 +193,7 @@
         private System.Windows.Forms.ToolStripMenuItem 删除ToolStripMenuItem;
         private System.Windows.Forms.ListBox lblSelected;
         private System.Windows.Forms.ListBox lbxOutput;
+        private System.Windows.Forms.Label label1;
     }
 }
 
