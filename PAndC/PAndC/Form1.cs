@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -24,7 +25,11 @@ namespace PAndC
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            ddlPort.Items.AddRange(SerialPort.GetPortNames());
+            if (ddlPort.Items.Count > 0)
+            {
+                ddlPort.SelectedIndex = 0;
+            }
         }
 
         /// <summary>
@@ -104,6 +109,12 @@ namespace PAndC
                 leftListCopy.Add(BuildList(leftItem.ToString()));
             }
 
+            if(leftListCopy.Any(a => a.Count < 5))
+            {
+                MessageBox.Show("左侧某一行数组个数小于5个，不能计算");
+                return;
+            }
+
             //选择后的数据的组合
             List<int[]> selectedCombinationList = new List<int[]>();
             foreach (var item in selectedList)
@@ -116,16 +127,19 @@ namespace PAndC
             {
                 var leftCombinations = PermutationAndCombination<int>.GetCombination(leftItem.ToArray(), 5);
 
-                foreach (var lcItem in leftCombinations) //左侧的组合
+                if(leftCombinations != null)
                 {
-                    if (selectedCombinationList.Any(s => s.All(lcItem.Contains)))
+                    foreach (var lcItem in leftCombinations) //左侧的组合
                     {
-                        foreach (var i in lcItem)   //选择的组合
+                        if (selectedCombinationList.Any(s => s.All(lcItem.Contains)))
                         {
-                            leftItem.Remove(i);
+                            foreach (var i in lcItem)   //选择的组合
+                            {
+                                leftItem.Remove(i);
+                            }
                         }
                     }
-                }
+                }                
             }
 
             OuputResult(leftListCopy);
@@ -246,19 +260,11 @@ namespace PAndC
 
         private void SendByteToCOM()
         {
-            COMHelper com = new COMHelper("COM2");
-            var result = com.OpenCom();
-            if(!result.Success)
-            {
-                MessageBox.Show(result.Msg);
-                return;
-            }
-
             foreach (var row in lbxOutput.Items)
             {
                 var output = $"FA DD {row.ToString()} 0D 0A";
                 var outputByte = strToHexByte(output);
-                result = com.SendData(outputByte);
+                var result = com.SendData(outputByte);
                 if (!result.Success)
                 {
                     MessageBox.Show("发送失败：" + result.Msg);
@@ -281,6 +287,24 @@ namespace PAndC
             for (int i = 0; i < returnBytes.Length; i++)
                 returnBytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2).Replace(" ", ""), 16);
             return returnBytes;
+        }
+
+        COMHelper com = null;
+        private void button1_Click(object sender, EventArgs e)
+        {
+            com = new COMHelper(ddlPort.SelectedItem.ToString());
+            var result = com.OpenCom();
+            if (!result.Success)
+            {
+                MessageBox.Show(result.Msg);
+                return;
+            }
+            MessageBox.Show("连接成功");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            lbxLeft.Items.Clear();
         }
     }
 }
