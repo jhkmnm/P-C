@@ -133,6 +133,12 @@ namespace PAndC
 
         private void OuputResult(List<List<int>> result)
         {
+            lbxLeft.Items.Clear();
+            foreach(var left in result)
+            {
+                lbxLeft.Items.Add(string.Join(" ", left.Select(s => s.ToString().PadLeft(2, '0'))));
+            }
+
             List<int> temp = new List<int>();
             foreach (var item in result)
             {
@@ -241,13 +247,23 @@ namespace PAndC
         private void SendByteToCOM()
         {
             COMHelper com = new COMHelper("COM2");
-            com.OpenCom();
+            var result = com.OpenCom();
+            if(!result.Success)
+            {
+                MessageBox.Show(result.Msg);
+                return;
+            }
 
             foreach (var row in lbxOutput.Items)
             {
                 var output = $"FA DD {row.ToString()} 0D 0A";
                 var outputByte = strToHexByte(output);
-                com.SendData(outputByte);
+                result = com.SendData(outputByte);
+                if (!result.Success)
+                {
+                    MessageBox.Show("发送失败：" + result.Msg);
+                    break;
+                }
             }
         }
 
